@@ -1,0 +1,387 @@
+/* ════════════════════════════════════════════════════
+   Home.css  —  Page-level styles only
+   (HeroSection, SearchBar have their own CSS files)
+════════════════════════════════════════════════════ */
+
+/* ── Featured section wrapper ── */
+.home-page__section--featured {
+  background: var(--color-bg);
+}
+
+/* ════════════════════════════════════════
+   WHY CHOOSE US SECTION
+════════════════════════════════════════ */
+.why-section {
+  background: var(--color-accent-lt);
+  padding: var(--space-24) var(--gap);
+}
+
+.why-section__inner {
+  max-width: var(--max-w);
+  margin-inline: auto;
+  display: flex;
+  gap: 64px;
+  align-items: flex-start;
+}
+
+/* Left sticky intro */
+.why-section__intro {
+  flex: 0 0 300px;
+  position: sticky;
+  top: calc(var(--navbar-h) + 24px);
+}
+
+.why-section__eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: var(--space-3);
+}
+
+.why-section__title {
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-2xl), 2.8vw, 2.25rem);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent);
+  line-height: var(--leading-snug);
+  margin-bottom: var(--space-4);
+  letter-spacing: -.02em;
+}
+
+.why-section__body {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  line-height: var(--leading-loose);
+  margin-bottom: var(--space-8);
+}
+
+.why-section__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 11px 26px;
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: var(--radius-full);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  transition:
+    background var(--dur-fast) var(--ease),
+    transform  var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-fast);
+}
+.why-section__cta:hover {
+  background: var(--color-accent-md);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 16px rgba(30,58,47,.25);
+}
+
+/* Right feature cards grid */
+.why-section__cards {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+}
+
+.why-card {
+  flex: 1 1 calc(50% - 12px);
+  min-width: 220px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 28px 24px;
+  transition:
+    transform  var(--dur-med) var(--ease-spring),
+    box-shadow var(--dur-med) var(--ease),
+    border-color var(--dur-fast);
+}
+.why-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(200,117,42,.20);
+}
+
+.why-card__icon {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-lt);
+  color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+  transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-fast) var(--ease-spring);
+}
+.why-card:hover .why-card__icon {
+  background: var(--color-accent);
+  color: #fff;
+  transform: scale(1.08);
+}
+
+.why-card__title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent);
+  margin-bottom: var(--space-2);
+}
+
+.why-card__desc {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  line-height: var(--leading-loose);
+}
+
+/* ════════════════════════════════════════
+   TESTIMONIALS
+════════════════════════════════════════ */
+.testimonials-section {
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding: var(--space-24) var(--gap);
+  text-align: center;
+}
+
+.testimonials-section__eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+}
+
+.testimonials-section__title {
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-2xl), 3vw, 2.5rem);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent);
+  letter-spacing: -.02em;
+  margin-bottom: var(--space-12);
+}
+
+.testimonials-section__grid {
+  display: flex;
+  gap: var(--space-6);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.testimonial-card {
+  flex: 1 1 280px;
+  max-width: 360px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 28px 26px;
+  text-align: left;
+  transition:
+    transform  var(--dur-med) var(--ease-spring),
+    box-shadow var(--dur-med) var(--ease),
+    border-color var(--dur-fast);
+}
+.testimonial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(200,117,42,.20);
+}
+
+.testimonial-card__stars {
+  display: flex;
+  gap: 2px;
+  margin-bottom: var(--space-4);
+}
+.testimonial-card__star { color: #f5a623; font-size: var(--text-md); }
+
+.testimonial-card__text {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  line-height: var(--leading-loose);
+  margin-bottom: var(--space-5);
+  font-style: italic;
+}
+
+.testimonial-card__author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.testimonial-card__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-md));
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(30,58,47,.25);
+}
+
+.testimonial-card__name {
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-base);
+  color: var(--color-accent);
+}
+
+.testimonial-card__role {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ════════════════════════════════════════
+   HOME CTA BANNER
+════════════════════════════════════════ */
+.home-cta {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-24) var(--gap);
+  text-align: center;
+}
+
+.home-cta__bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-md) 50%, #1a1a18 100%);
+  z-index: 0;
+}
+.home-cta__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(200,117,42,.25) 0%, transparent 60%);
+}
+
+.home-cta__content {
+  position: relative;
+  z-index: 1;
+  max-width: 580px;
+  margin-inline: auto;
+}
+
+.home-cta__eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.55);
+  margin-bottom: var(--space-3);
+}
+
+.home-cta__title {
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-2xl), 3.5vw, 2.75rem);
+  font-weight: var(--weight-bold);
+  color: #fff;
+  letter-spacing: -.02em;
+  line-height: var(--leading-snug);
+  margin-bottom: var(--space-4);
+}
+
+.home-cta__sub {
+  color: rgba(255,255,255,.68);
+  font-size: var(--text-md);
+  line-height: var(--leading-loose);
+  margin-bottom: var(--space-10);
+}
+
+.home-cta__buttons {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.home-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 13px 32px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  transition:
+    background var(--dur-fast) var(--ease),
+    transform  var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-fast);
+}
+.home-cta__btn--primary {
+  background: #fff;
+  color: var(--color-primary);
+}
+.home-cta__btn--primary:hover {
+  background: #f5efe6;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.15);
+}
+.home-cta__btn--ghost {
+  border: 2px solid rgba(255,255,255,.45);
+  color: #fff;
+  background: transparent;
+}
+.home-cta__btn--ghost:hover {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.70);
+  transform: translateY(-2px);
+}
+
+/* ════════════════════════════════════════
+   SHARED KEYFRAME (used by multiple sections)
+════════════════════════════════════════ */
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .why-section__inner  { flex-direction: column; gap: var(--space-10); }
+  .why-section__intro  { position: static; flex: unset; }
+  .why-card            { flex: 1 1 calc(50% - 12px); }
+}
+
+@media (max-width: 560px) {
+  .why-section, .testimonials-section { padding: var(--space-16) var(--gap); }
+  .why-card                           { flex: 1 1 100%; }
+  .testimonials-section__grid         { flex-direction: column; align-items: center; }
+  .testimonial-card                   { max-width: 100%; }
+  .home-cta__buttons                  { flex-direction: column; align-items: center; }
+  .home-cta__btn                      { width: 100%; justify-content: center; }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — consistency pass
+══════════════════════════════════════ */
+
+/* Why section stacks on tablet */
+@media (max-width: 960px) {
+  .why-section__inner  { flex-direction: column; gap: 40px; }
+  .why-section__intro  { flex: unset; position: static; width: 100%; }
+  .why-section__cards  { width: 100%; }
+  .why-card            { flex: 1 1 calc(50% - 10px); }
+}
+
+/* Testimonials single column on mobile */
+@media (max-width: 640px) {
+  .why-card                  { flex: 1 1 100%; }
+  .testimonials-section__grid { flex-direction: column; align-items: stretch; }
+  .testimonial-card          { max-width: 100%; }
+  .home-cta__buttons         { flex-direction: column; }
+  .home-cta__btn             { width: 100%; text-align: center; }
+  .why-section               { padding: var(--space-16) var(--gap); }
+  .testimonials-section      { padding: var(--space-16) var(--gap); }
+  .home-cta                  { padding: var(--space-16) var(--gap); }
+}

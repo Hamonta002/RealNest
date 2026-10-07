@@ -1,0 +1,734 @@
+/* ══════════════════════════════════════════════════════
+   PropertyCard.css  —  Complete ground-up rewrite
+   BEM prefix: pc__
+   Layouts: .pc--grid (default)  |  .pc--list (horizontal)
+   Variant: .pc--featured  (larger image, agent strip always on)
+══════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────
+   LOCAL TIMING TOKENS
+───────────────────────────────────────── */
+.pc {
+  --pc-ease:       cubic-bezier(.22, .68, 0, 1.2);
+  --pc-ease-out:   cubic-bezier(.4, 0, .2, 1);
+  --pc-dur-fast:   0.18s;
+  --pc-dur-med:    0.30s;
+  --pc-dur-slow:   0.45s;
+
+  --pc-img-h-grid: 224px;
+  --pc-img-h-list: 100%;
+  --pc-img-w-list: 290px;
+
+  --pc-radius:     14px;
+  --pc-shadow-rest: 0 2px 8px rgba(0,0,0,.06), 0 0 0 1px var(--color-border);
+  --pc-shadow-hover:
+    0 8px 20px rgba(0,0,0,.08),
+    0 20px 48px rgba(0,0,0,.10),
+    0 0 0 1.5px rgba(200,117,42,.28);
+  --pc-shadow-active: 0 4px 12px rgba(0,0,0,.08), 0 0 0 1.5px rgba(200,117,42,.28);
+}
+
+/* ═══════════════════════════════════════
+   BASE CARD  (shared by grid + list)
+═══════════════════════════════════════ */
+.pc {
+  position: relative;
+  background: var(--color-surface);
+  border-radius: var(--pc-radius);
+  overflow: hidden;
+  display: flex;
+  height: 100%;
+  box-shadow: var(--pc-shadow-rest);
+  outline: none;
+
+  /* Main lift + shadow transition */
+  transition:
+    transform   var(--pc-dur-med) var(--pc-ease),
+    box-shadow  var(--pc-dur-med) var(--pc-ease-out);
+
+  /* GPU-accelerate */
+  will-change: transform, box-shadow;
+}
+
+/* Hover state — lift + deeper shadow */
+.pc:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--pc-shadow-hover);
+}
+
+/* Active / press state */
+.pc:active {
+  transform: translateY(-3px);
+  box-shadow: var(--pc-shadow-active);
+}
+
+/* ═══════════════════════════════════════
+   GRID LAYOUT  (vertical stack)
+═══════════════════════════════════════ */
+.pc--grid {
+  flex-direction: column;
+}
+
+.pc--grid .pc__img-zone {
+  position: relative;
+  height: var(--pc-img-h-grid);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Description: hidden by default, slides in on hover */
+.pc--grid .pc__desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: .82rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  /* Smooth reveal */
+  max-height: 0;
+  opacity: 0;
+  margin-bottom: 0;
+  transition:
+    max-height var(--pc-dur-slow) var(--pc-ease-out),
+    opacity    var(--pc-dur-med)  ease,
+    margin     var(--pc-dur-med)  ease;
+}
+
+.pc--grid:hover .pc__desc {
+  max-height: 56px;
+  opacity: 1;
+  margin-bottom: 14px;
+}
+
+/* ═══════════════════════════════════════
+   LIST LAYOUT  (horizontal)
+═══════════════════════════════════════ */
+.pc--list {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.pc--list:hover { transform: translateY(-4px); }
+
+.pc--list .pc__img-zone {
+  position: relative;
+  width: var(--pc-img-w-list);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Description always visible in list mode */
+.pc--list .pc__desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: .86rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+
+/* ═══════════════════════════════════════
+   FEATURED VARIANT  (slightly taller img)
+═══════════════════════════════════════ */
+.pc--featured .pc__img-zone { height: 240px; }
+
+/* ═══════════════════════════════════════
+   IMAGE ZONE  (shared internals)
+═══════════════════════════════════════ */
+
+/* ── Skeleton shimmer ── */
+.pc__skeleton {
+  position: absolute;
+  inset: 0;
+  background: #f0ece4;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.pc__skeleton-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255,255,255,.55) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position:  200% 0; }
+}
+
+/* ── Property image ── */
+.pc__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  /* Fade-in once loaded */
+  opacity: 0;
+  transform: scale(1.04);
+  transition:
+    opacity   var(--pc-dur-med)  ease,
+    transform var(--pc-dur-slow) var(--pc-ease-out);
+}
+
+.pc__img--loaded {
+  opacity: 1;
+  transform: scale(1.0);
+}
+
+/* Zoom on card hover */
+.pc:hover .pc__img { transform: scale(1.07); }
+
+/* ── Image error fallback ── */
+.pc__img-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #f0ece4;
+  color: var(--color-text-muted);
+  font-size: .78rem;
+}
+
+/* ── Gradient veil (readability) ── */
+.pc__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top,  rgba(15,25,20,.65) 0%,  transparent 50%),
+    linear-gradient(to right, rgba(15,25,20,.18) 0%,  transparent 45%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Colour tint on hover ── */
+.pc__tint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(200,117,42,.18), transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity var(--pc-dur-med) ease;
+}
+
+.pc:hover .pc__tint { opacity: 1; }
+
+/* ── Status badge ── */
+.pc__badge {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: var(--radius-full);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  /* glass look */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0,0,0,.20);
+  transition: transform var(--pc-dur-fast) var(--pc-ease);
+}
+
+.pc:hover .pc__badge { transform: translateY(-1px); }
+
+.pc__badge--sale {
+  background: rgba(200, 117, 42, 0.92);
+  color: #fff;
+}
+.pc__badge--rent {
+  background: rgba(30, 58, 47, 0.88);
+  color: #fff;
+}
+
+/* ── Type chip — bottom left ── */
+.pc__type-chip {
+  position: absolute;
+  bottom: 13px;
+  left: 13px;
+  z-index: 5;
+  padding: 4px 11px;
+  border-radius: var(--radius-full);
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  background: rgba(255,255,255,.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255,255,255,.92);
+  border: 1px solid rgba(255,255,255,.22);
+  transition: background var(--pc-dur-fast) ease;
+}
+
+.pc:hover .pc__type-chip { background: rgba(255,255,255,.22); }
+
+/* ── Rating chip — bottom right ── */
+.pc__rating-chip {
+  position: absolute;
+  bottom: 13px;
+  right: 13px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: rgba(0,0,0,.48);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.12);
+  font-size: .72rem;
+  font-weight: 700;
+  color: #fff;
+  transition: background var(--pc-dur-fast) ease;
+}
+.pc:hover .pc__rating-chip { background: rgba(0,0,0,.58); }
+
+.pc__rating-reviews {
+  font-weight: 400;
+  color: rgba(255,255,255,.65);
+  font-size: .65rem;
+}
+
+/* ── Save / heart button ── */
+.pc__save {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  z-index: 5;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--color-text-muted);
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+
+  transition:
+    background  var(--pc-dur-fast) ease,
+    color       var(--pc-dur-fast) ease,
+    transform   var(--pc-dur-fast) var(--pc-ease),
+    box-shadow  var(--pc-dur-fast) ease;
+}
+
+.pc__save:hover {
+  background: #fff;
+  color: #e53e3e;
+  transform: scale(1.18);
+  box-shadow: 0 4px 14px rgba(229, 62, 62, 0.30);
+}
+
+/* Saved / active state */
+.pc__save--on {
+  background: #fff0f0;
+  color: #e53e3e;
+  box-shadow: 0 3px 10px rgba(229, 62, 62, 0.25);
+}
+
+.pc__save--on:hover {
+  background: #ffe0e0;
+  transform: scale(1.18) rotate(-5deg);
+}
+
+/* ═══════════════════════════════════════
+   CARD BODY
+═══════════════════════════════════════ */
+.pc__body {
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Title block ── */
+.pc__title-block {
+  margin-bottom: 10px;
+}
+
+.pc__title {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  line-height: 1.3;
+  margin-bottom: 6px;
+
+  /* Clamp to one line in grid, two in list */
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  transition: color var(--pc-dur-fast) ease;
+}
+
+.pc--list .pc__title {
+  -webkit-line-clamp: 2;
+  font-size: 1.12rem;
+}
+
+.pc:hover .pc__title { color: var(--color-primary); }
+
+/* Location row */
+.pc__location {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .80rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.pc__location svg {
+  flex-shrink: 0;
+  color: var(--color-primary);
+  opacity: .75;
+  transition: opacity var(--pc-dur-fast) ease;
+}
+
+.pc:hover .pc__location svg { opacity: 1; }
+
+.pc__location span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Spec pills ── */
+.pc__specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  list-style: none;
+  margin-bottom: 14px;
+}
+
+.pc__spec {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  font-size: .76rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  transition:
+    background    var(--pc-dur-fast) ease,
+    border-color  var(--pc-dur-fast) ease,
+    color         var(--pc-dur-fast) ease;
+}
+
+.pc__spec-icon {
+  display: flex;
+  align-items: center;
+  color: var(--color-accent);
+  opacity: .65;
+  transition: opacity var(--pc-dur-fast) ease;
+}
+
+.pc:hover .pc__spec {
+  background: var(--color-accent-lt);
+  border-color: #c8ddd4;
+  color: var(--color-accent);
+}
+
+.pc:hover .pc__spec-icon { opacity: 1; }
+
+/* ── Separator ── */
+.pc__sep {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-border) 20%,
+    var(--color-border) 80%,
+    transparent
+  );
+  margin-bottom: 16px;
+  margin-top: auto;
+  transition: background var(--pc-dur-med) ease;
+}
+
+.pc:hover .pc__sep {
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(200,117,42,.25) 20%,
+    rgba(200,117,42,.25) 80%,
+    transparent
+  );
+}
+
+/* ── Price + CTA footer ── */
+.pc__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* Price */
+.pc__price-block { min-width: 0; }
+
+.pc__price-label {
+  display: block;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 3px;
+  opacity: .75;
+}
+
+.pc__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.pc__currency {
+  font-family: var(--font-display);
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.pc__price {
+  font-family: var(--font-display);
+  font-size: 1.38rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+  letter-spacing: -.02em;
+  transition: color var(--pc-dur-fast) ease;
+}
+
+.pc:hover .pc__price { color: var(--color-primary-dk); }
+
+.pc__per {
+  font-size: .74rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-left: 1px;
+}
+
+/* CTA button */
+.pc__cta {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: var(--radius-full);
+  font-size: .82rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-accent);
+  text-decoration: none;
+  white-space: nowrap;
+
+  box-shadow: 0 3px 10px rgba(30,58,47,.22);
+
+  transition:
+    background   var(--pc-dur-fast) ease,
+    gap          var(--pc-dur-fast) var(--pc-ease),
+    transform    var(--pc-dur-fast) var(--pc-ease),
+    box-shadow   var(--pc-dur-fast) ease;
+}
+
+.pc__cta:hover {
+  background: #2e5943;
+  gap: 9px;
+  transform: translateX(2px);
+  box-shadow: 0 5px 16px rgba(30,58,47,.30);
+}
+
+.pc__cta:active {
+  transform: translateX(0) scale(0.97);
+  box-shadow: 0 2px 6px rgba(30,58,47,.20);
+}
+
+.pc__cta-icon {
+  display: flex;
+  align-items: center;
+  transition: transform var(--pc-dur-fast) var(--pc-ease);
+}
+
+.pc__cta:hover .pc__cta-icon { transform: translateX(2px); }
+
+/* ═══════════════════════════════════════
+   AGENT STRIP
+═══════════════════════════════════════ */
+.pc__agent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Avatar initials */
+.pc__agent-av {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #2e5943 100%);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: .72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(30,58,47,.28);
+  letter-spacing: .02em;
+}
+
+.pc__agent-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pc__agent-name {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pc__agent-role {
+  font-size: .70rem;
+  color: var(--color-text-muted);
+  letter-spacing: .02em;
+}
+
+/* Email icon button */
+.pc__agent-mail {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  transition:
+    background    var(--pc-dur-fast) ease,
+    color         var(--pc-dur-fast) ease,
+    border-color  var(--pc-dur-fast) ease,
+    transform     var(--pc-dur-fast) var(--pc-ease);
+}
+
+.pc__agent-mail:hover {
+  background: var(--color-accent-lt);
+  color: var(--color-accent);
+  border-color: #c8ddd4;
+  transform: scale(1.12);
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+
+/* Tablet: reduce list image width */
+@media (max-width: 900px) {
+  .pc--list .pc__img-zone { width: 240px; }
+  .pc__price { font-size: 1.22rem; }
+}
+
+/* Mobile: stack list card vertically */
+@media (max-width: 640px) {
+  .pc--list {
+    flex-direction: column;
+  }
+
+  .pc--list .pc__img-zone {
+    width: 100%;
+    height: 210px;
+  }
+
+  /* Always show description on mobile */
+  .pc--grid .pc__desc {
+    max-height: 48px;
+    opacity: 1;
+    margin-bottom: 12px;
+  }
+
+  .pc__body { padding: 16px 18px 18px; }
+  .pc__price { font-size: 1.25rem; }
+  .pc__cta   { padding: 8px 14px; font-size: .78rem; }
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+  .pc__specs { gap: 5px; }
+  .pc__spec  { padding: 4px 9px; font-size: .72rem; }
+  .pc__footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .pc__cta    { width: 100%; justify-content: center; }
+}
+
+/* ═══════════════════════════════════════
+   REDUCED MOTION
+═══════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .pc,
+  .pc__img,
+  .pc__tint,
+  .pc__badge,
+  .pc__save,
+  .pc__spec,
+  .pc__sep,
+  .pc__price,
+  .pc__cta,
+  .pc__agent-mail,
+  .pc--grid .pc__desc,
+  .pc__skeleton-shimmer {
+    transition-duration: 0.01ms !important;
+    animation-duration:  0.01ms !important;
+  }
+}

@@ -1,0 +1,1 @@
+{"routes":[{"path":"/","title":"RealNest — Real Estate Platform"},{"path":"/properties","title":"Browse Properties"},{"path":"/properties/:id","title":"Property Details"},{"path":"/add-property","title":"List a Property"},{"path":"/admin","title":"Admin Dashboard"},{"path":"/login","title":"Sign In"},{"path":"/register","title":"Create Account"}]}
